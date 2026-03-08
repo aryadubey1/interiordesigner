@@ -327,7 +327,7 @@
   </nav>
 
   <!-- Mobile Menu -->
-  <div id="mobile-menu" class="hidden fixed inset-0 bg-ivory z-50 flex flex-col justify-center items-center gap-10" style="display: none !important;">
+  <div id="mobile-menu" style="display:none; position:fixed; inset:0; background:var(--ivory); z-index:50; flex-direction:column; justify-content:center; align-items:center; gap:2.5rem;">
     <button id="close-menu" class="absolute top-6 right-6 text-charcoal" style="cursor: none;">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
     </button>
@@ -409,7 +409,15 @@
   </footer>
 
   <script>
-    // ── Custom cursor ──
+  // ── Hide cursor entirely on touch devices ──
+  const isTouchDevice = () => window.matchMedia('(pointer: coarse)').matches;
+
+  if (isTouchDevice()) {
+    document.getElementById('cursor-dot').style.display = 'none';
+    document.getElementById('cursor-ring').style.display = 'none';
+    document.body.style.cursor = 'auto';
+  } else {
+    // ── Custom cursor (desktop only) ──
     const dot = document.getElementById('cursor-dot');
     const ring = document.getElementById('cursor-ring');
     let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
@@ -439,46 +447,57 @@
         ring.style.width = '36px'; ring.style.height = '36px';
       });
     });
+  }
 
-    // ── Navbar scroll ──
-    const navbar = document.getElementById('navbar');
-    window.addEventListener('scroll', () => {
-      navbar.classList.toggle('scrolled', window.scrollY > 40);
+  // ── Navbar scroll ──
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 40);
+  });
+
+  // ── Mobile menu ──
+  const menuBtn = document.getElementById('menu-btn');
+  const closeMenuBtn = document.getElementById('close-menu');
+  const mobileMenu = document.getElementById('mobile-menu');
+
+  function openMenu() {
+    mobileMenu.style.display = 'flex';
+    mobileMenu.style.opacity = '1';
+    mobileMenu.style.transform = 'translateX(0)';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeMenu() {
+    mobileMenu.style.display = 'none';
+    document.body.style.overflow = '';
+  }
+
+  menuBtn.addEventListener('click', openMenu);
+  closeMenuBtn.addEventListener('click', closeMenu);
+
+  // Close menu when a nav link is tapped
+  mobileMenu.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', closeMenu);
+  });
+
+  // ── Scroll reveal ──
+  const reveals = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) entry.target.classList.add('visible');
     });
+  }, { threshold: 0.12 });
+  reveals.forEach(el => observer.observe(el));
 
-    // ── Mobile menu ──
-    const menuBtn = document.getElementById('menu-btn');
-    const closeMenu = document.getElementById('close-menu');
-    const mobileMenu = document.getElementById('mobile-menu');
-
-    menuBtn.addEventListener('click', () => {
-      mobileMenu.style.display = 'flex';
-      mobileMenu.style.setProperty('display', 'flex', 'important');
+  // ── Auto-hide messages ──
+  setTimeout(() => {
+    document.querySelectorAll('.message-toast').forEach(el => {
+      el.style.transition = 'opacity 0.5s ease';
+      el.style.opacity = '0';
+      setTimeout(() => el.remove(), 500);
     });
-    closeMenu.addEventListener('click', () => {
-      mobileMenu.style.setProperty('display', 'none', 'important');
-    });
-
-    // ── Scroll reveal ──
-    const reveals = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-        }
-      });
-    }, { threshold: 0.12 });
-    reveals.forEach(el => observer.observe(el));
-
-    // ── Auto-hide messages ──
-    setTimeout(() => {
-      document.querySelectorAll('.message-toast').forEach(el => {
-        el.style.transition = 'opacity 0.5s ease';
-        el.style.opacity = '0';
-        setTimeout(() => el.remove(), 500);
-      });
-    }, 4000);
-  </script>
+  }, 4000);
+</script>
 
   {% block extra_js %}{% endblock %}
 </body>
