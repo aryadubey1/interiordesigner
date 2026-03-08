@@ -409,121 +409,144 @@
   </footer>
 
   <script>
-  const dot = document.getElementById('cursor-dot');
-  const ring = document.getElementById('cursor-ring');
+    const dot = document.getElementById('cursor-dot');
+    const ring = document.getElementById('cursor-ring');
 
-  const isTouchDevice = () => window.matchMedia('(pointer: coarse)').matches;
+    const isTouchDevice = () => window.matchMedia('(pointer: coarse)').matches;
 
-  if (isTouchDevice()) {
-    // ── Mobile: hide cursor elements, show gold dot briefly on tap ──
-    dot.style.display = 'none';
-    ring.style.display = 'none';
-    document.body.style.cursor = 'auto';
+    if (isTouchDevice()) {
+      dot.style.display = 'none';
+      ring.style.display = 'none';
+      document.body.style.cursor = 'auto';
 
-    let cursorTimeout;
-    document.addEventListener('touchstart', e => {
-      const touch = e.touches[0];
-      dot.style.display = 'block';
-      dot.style.left = touch.clientX + 'px';
-      dot.style.top = touch.clientY + 'px';
-      dot.style.opacity = '1';
-      dot.style.transition = 'none';
+      let cursorTimeout;
+      document.addEventListener('touchstart', e => {
+        const touch = e.touches[0];
 
-      clearTimeout(cursorTimeout);
-      cursorTimeout = setTimeout(() => {
-        dot.style.transition = 'opacity 0.5s ease';
-        dot.style.opacity = '0';
-        setTimeout(() => { dot.style.display = 'none'; }, 500);
-      }, 2000);
-    });
+        // Show both dot and ring at tap position
+        dot.style.display = 'block';
+        dot.style.opacity = '1';
+        dot.style.transition = 'none';
+        dot.style.left = touch.clientX + 'px';
+        dot.style.top = touch.clientY + 'px';
 
-  } else {
-    // ── Desktop: full custom cursor ──
-    let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
+        ring.style.display = 'block';
+        ring.style.opacity = '1';
+        ring.style.transition = 'none';
+        ring.style.left = touch.clientX + 'px';
+        ring.style.top = touch.clientY + 'px';
 
-    document.addEventListener('mousemove', e => {
-      mouseX = e.clientX; mouseY = e.clientY;
-      dot.style.left = mouseX + 'px';
-      dot.style.top = mouseY + 'px';
-    });
+        clearTimeout(cursorTimeout);
+        cursorTimeout = setTimeout(() => {
+          dot.style.transition = 'opacity 0.5s ease';
+          ring.style.transition = 'opacity 0.5s ease';
+          dot.style.opacity = '0';
+          ring.style.opacity = '0';
+          setTimeout(() => {
+            dot.style.display = 'none';
+            ring.style.display = 'none';
+          }, 500);
+        }, 2000);
+      });
 
-    function animateRing() {
-      ringX += (mouseX - ringX) * 0.12;
-      ringY += (mouseY - ringY) * 0.12;
-      ring.style.left = ringX + 'px';
-      ring.style.top = ringY + 'px';
-      requestAnimationFrame(animateRing);
+    } else {
+      // ── Desktop: full custom cursor ──
+      let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
+
+      document.addEventListener('mousemove', e => {
+        mouseX = e.clientX; mouseY = e.clientY;
+        dot.style.left = mouseX + 'px';
+        dot.style.top = mouseY + 'px';
+      });
+
+      function animateRing() {
+        ringX += (mouseX - ringX) * 0.12;
+        ringY += (mouseY - ringY) * 0.12;
+        ring.style.left = ringX + 'px';
+        ring.style.top = ringY + 'px';
+        requestAnimationFrame(animateRing);
+      }
+      animateRing();
+
+      document.querySelectorAll('a, button').forEach(el => {
+        el.addEventListener('mouseenter', () => {
+          dot.style.width = '14px'; dot.style.height = '14px';
+          ring.style.width = '52px'; ring.style.height = '52px';
+        });
+        el.addEventListener('mouseleave', () => {
+          dot.style.width = '8px'; dot.style.height = '8px';
+          ring.style.width = '36px'; ring.style.height = '36px';
+        });
+      });
     }
-    animateRing();
 
-    document.querySelectorAll('a, button').forEach(el => {
-      el.addEventListener('mouseenter', () => {
-        dot.style.width = '14px'; dot.style.height = '14px';
-        ring.style.width = '52px'; ring.style.height = '52px';
+    // ── Navbar scroll ──
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 40);
+    });
+
+    // ── Mobile menu ──
+    const menuBtn = document.getElementById('menu-btn');
+    const closeMenuBtn = document.getElementById('close-menu');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    function openMenu() {
+      mobileMenu.style.cssText = `
+        display: flex !important;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 2.5rem;
+        position: fixed;
+        inset: 0;
+        z-index: 9997;
+        background: var(--ivory);
+        opacity: 1;
+        transform: translateX(0);
+      `;
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeMenu() {
+      mobileMenu.style.cssText = 'display: none !important;';
+      document.body.style.overflow = '';
+    }
+
+    // Use both click and touchend to ensure it works on mobile
+    function addTapListener(el, fn) {
+      el.addEventListener('click', fn);
+      el.addEventListener('touchend', e => {
+        e.preventDefault();
+        fn();
       });
-      el.addEventListener('mouseleave', () => {
-        dot.style.width = '8px'; dot.style.height = '8px';
-        ring.style.width = '36px'; ring.style.height = '36px';
+    }
+
+    addTapListener(menuBtn, openMenu);
+    addTapListener(closeMenuBtn, closeMenu);
+
+    mobileMenu.querySelectorAll('a').forEach(link => {
+      addTapListener(link, closeMenu);
+    });
+
+    // ── Scroll reveal ──
+    const reveals = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add('visible');
       });
-    });
-  }
+    }, { threshold: 0.12 });
+    reveals.forEach(el => observer.observe(el));
 
-  // ── Navbar scroll ──
-  const navbar = document.getElementById('navbar');
-  window.addEventListener('scroll', () => {
-    navbar.classList.toggle('scrolled', window.scrollY > 40);
-  });
-
-  // ── Mobile menu ──
-  const menuBtn = document.getElementById('menu-btn');
-  const closeMenuBtn = document.getElementById('close-menu');
-  const mobileMenu = document.getElementById('mobile-menu');
-
-  function openMenu() {
-    mobileMenu.style.display = 'flex';
-    mobileMenu.style.opacity = '1';
-    mobileMenu.style.transform = 'translateX(0)';
-    mobileMenu.style.position = 'fixed';
-    mobileMenu.style.inset = '0';
-    mobileMenu.style.zIndex = '50';
-    mobileMenu.style.flexDirection = 'column';
-    mobileMenu.style.justifyContent = 'center';
-    mobileMenu.style.alignItems = 'center';
-    mobileMenu.style.gap = '2.5rem';
-    mobileMenu.style.background = 'var(--ivory)';
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closeMenu() {
-    mobileMenu.style.display = 'none';
-    document.body.style.overflow = '';
-  }
-
-  menuBtn.addEventListener('click', openMenu);
-  closeMenuBtn.addEventListener('click', closeMenu);
-
-  mobileMenu.querySelectorAll('a').forEach(link => {
-    link.addEventListener('click', closeMenu);
-  });
-
-  // ── Scroll reveal ──
-  const reveals = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) entry.target.classList.add('visible');
-    });
-  }, { threshold: 0.12 });
-  reveals.forEach(el => observer.observe(el));
-
-  // ── Auto-hide messages ──
-  setTimeout(() => {
-    document.querySelectorAll('.message-toast').forEach(el => {
-      el.style.transition = 'opacity 0.5s ease';
-      el.style.opacity = '0';
-      setTimeout(() => el.remove(), 500);
-    });
-  }, 4000);
-</script>
+    // ── Auto-hide messages ──
+    setTimeout(() => {
+      document.querySelectorAll('.message-toast').forEach(el => {
+        el.style.transition = 'opacity 0.5s ease';
+        el.style.opacity = '0';
+        setTimeout(() => el.remove(), 500);
+      });
+    }, 4000);
+  </script>
 
   {% block extra_js %}{% endblock %}
 </body>
