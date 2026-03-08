@@ -1,10 +1,21 @@
 #!/usr/bin/env bash
-# exit on error
 set -o errexit
 
 pip install -r requirements.txt
 
 python manage.py collectstatic --no-input
+
+# Fix stale migration state — clear core migration history then remigrate
+python manage.py shell << END
+from django.db import connection
+try:
+    with connection.cursor() as cursor:
+        cursor.execute("DELETE FROM django_migrations WHERE app = 'core';")
+    print("Cleared core migration history")
+except Exception as e:
+    print(f"Could not clear migration history: {e}")
+END
+
 python manage.py migrate
 
 # Create superuser if it doesn't exist
@@ -18,7 +29,6 @@ username = os.getenv('DJANGO_SUPERUSER_USERNAME')
 email = os.getenv('DJANGO_SUPERUSER_EMAIL')
 password = os.getenv('DJANGO_SUPERUSER_PASSWORD')
 
-# Safety check: if variables aren't set in Render, don't run this
 if not all([username, email, password]):
     print("SKIPPING SUPERUSER: Environment variables not set.")
     sys.exit(0)
