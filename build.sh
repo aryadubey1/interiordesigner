@@ -5,24 +5,28 @@ pip install -r requirements.txt
 
 python manage.py collectstatic --no-input
 
-# Clear stale migration history for core app only
+# Drop all core tables and migration history, then remigrate cleanly
 python manage.py shell << END
 from django.db import connection
-try:
-    with connection.cursor() as cursor:
-        cursor.execute("DELETE FROM django_migrations WHERE app = 'core';")
-    print("Cleared core migration history")
-except Exception as e:
-    print(f"Could not clear migration history: {e}")
+with connection.cursor() as cursor:
+    cursor.execute("""
+        DROP TABLE IF EXISTS core_projectimage CASCADE;
+        DROP TABLE IF EXISTS core_project CASCADE;
+        DROP TABLE IF EXISTS core_service CASCADE;
+        DROP TABLE IF EXISTS core_testimonial CASCADE;
+        DROP TABLE IF EXISTS core_contactmessage CASCADE;
+        DROP TABLE IF EXISTS core_category CASCADE;
+        DELETE FROM django_migrations WHERE app = 'core';
+    """)
+    print("Dropped all core tables and cleared migration history")
 END
 
-python manage.py migrate --fake-initial
+python manage.py migrate
 
-# Create superuser if it doesn't exist
+# Create superuser
 python manage.py shell << END
 from django.contrib.auth import get_user_model
-import os
-import sys
+import os, sys
 
 User = get_user_model()
 username = os.getenv('DJANGO_SUPERUSER_USERNAME')
