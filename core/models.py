@@ -104,3 +104,24 @@ class ContactMessage(models.Model):
 
     def __str__(self):
         return f'{self.name} — {self.subject}'
+
+
+class TeamMember(models.Model):
+    name = models.CharField(max_length=100)
+    role = models.CharField(max_length=100)
+    bio = models.TextField()
+    photo = models.FileField(upload_to='team/', blank=True, null=True)
+    photo_url = models.URLField(blank=True, help_text='External image URL')
+    order = models.PositiveIntegerField(default=0)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ['order']
+
+    def __str__(self):
+        return self.name
+
+    def get_photo_url(self):
+        if self.photo:
+            return self.photo.url
+        return self.photo_url or ''

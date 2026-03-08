@@ -118,26 +118,27 @@
       <h2 class="font-display font-light text-charcoal" style="font-size:clamp(2rem,4.5vw,3.5rem);">Meet the Team</h2>
     </div>
     <div class="grid md:grid-cols-3 gap-10">
-      {% for member in team_members %}
+      {% for member in team %}
       <div class="reveal delay-{{ forloop.counter }}">
-        <div class="img-placeholder mb-6" style="height:380px; background: linear-gradient(135deg, #EDE9E3, #D6D0C8);">
-          <span class="font-display text-5xl" style="color:rgba(26,26,26,0.15);">{{ member.initials }}</span>
+        <div class="mb-6 overflow-hidden" style="height:380px;">
+          {% if member.get_photo_url %}
+          <img src="{{ member.get_photo_url }}" alt="{{ member.name }}"
+               class="w-full h-full object-cover">
+          {% else %}
+          <div class="img-placeholder w-full h-full" style="background:linear-gradient(135deg,#EDE9E3,#D6D0C8);">
+            <span class="font-display text-6xl" style="color:rgba(26,26,26,0.12);">{{ member.name|slice:":1" }}</span>
+          </div>
+          {% endif %}
         </div>
         <h3 class="font-display text-2xl font-light text-charcoal">{{ member.name }}</h3>
         <p class="font-body text-xs tracking-widest uppercase mt-1" style="color:var(--gold);font-size:0.6rem;">{{ member.role }}</p>
         <p class="font-body text-sm text-charcoal-light leading-relaxed mt-4">{{ member.bio }}</p>
       </div>
       {% empty %}
-      {% for m in default_team %}
-      <div class="reveal delay-{{ forloop.counter }}">
-        <div class="img-placeholder mb-6" style="height:380px; background:linear-gradient(135deg,#EDE9E3,#D6D0C8);">
-          <span class="font-display text-6xl" style="color:rgba(26,26,26,0.12);">{{ forloop.counter }}</span>
-        </div>
-        <h3 class="font-display text-2xl font-light text-charcoal">Isabelle Mercer</h3>
-        <p class="font-body text-xs tracking-widest uppercase mt-1" style="color:var(--gold);font-size:0.6rem;">Principal Designer</p>
-        <p class="font-body text-sm text-charcoal-light leading-relaxed mt-4">With over 12 years of practice, Isabelle brings a rigorous eye for proportion and an instinctive sensitivity to natural light.</p>
+      <div class="md:col-span-3 text-center py-12">
+        <div class="font-display text-5xl mb-4" style="color:rgba(201,169,110,0.2);">✦</div>
+        <p class="font-display text-xl text-charcoal/40">Add team members via the admin panel</p>
       </div>
-      {% endfor %}
       {% endfor %}
     </div>
   </div>

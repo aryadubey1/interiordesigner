@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
-from .models import Project, Service, Testimonial, Category
+from .models import Project, Service, Testimonial, Category, TeamMember
 from .forms import ContactForm
 
 
@@ -19,11 +19,10 @@ def home(request):
 
 def about(request):
     testimonials = Testimonial.objects.filter(is_active=True)
-    # Default team data (shown when no DB team model is used)
-    default_team = [1, 2, 3]
+    team = TeamMember.objects.filter(is_active=True)
     context = {
         'testimonials': testimonials,
-        'default_team': default_team,
+        'team': team,
         'page': 'about',
     }
     return render(request, 'core/about.html', context)
