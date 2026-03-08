@@ -3,7 +3,6 @@ Django settings for Lumière Interior Design
 """
 
 from pathlib import Path
-import cloudinary
 import os
 import dj_database_url
 from decouple import config
@@ -22,10 +21,10 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'core',
     'cloudinary_storage',
+    'django.contrib.staticfiles',
     'cloudinary',
+    'core',
 ]
 
 MIDDLEWARE = [
@@ -60,7 +59,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 # Database
-DATABASE_URL = config('DATABASE_URL', default=f'sqlite:///{BASE_DIR}/db.sqlite3')
+
 DATABASES = {
     'default': dj_database_url.config(
         default=f'sqlite:///{BASE_DIR}/db.sqlite3',
