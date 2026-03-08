@@ -5,7 +5,7 @@ pip install -r requirements.txt
 
 python manage.py collectstatic --no-input
 
-# Fix stale migration state — clear core migration history then remigrate
+# Clear stale migration history for core app only
 python manage.py shell << END
 from django.db import connection
 try:
@@ -16,7 +16,7 @@ except Exception as e:
     print(f"Could not clear migration history: {e}")
 END
 
-python manage.py migrate
+python manage.py migrate --fake-initial
 
 # Create superuser if it doesn't exist
 python manage.py shell << END
