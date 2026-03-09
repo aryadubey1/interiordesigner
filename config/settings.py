@@ -65,6 +65,13 @@ DATABASES = {
     )
 }
 
+# Force Project to use its own schema on Render
+if os.getenv('RENDER'): # A safer check than 'not DEBUG'
+    DATABASES['default']['OPTIONS'] = {
+        'options': '-c search_path=project_b_schema'
+    }
+
+
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
