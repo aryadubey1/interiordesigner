@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
-from .models import Project, Service, Testimonial, Category, TeamMember
+from .models import Project, Service, Testimonial, Category, TeamMember, StudioImage
 from .forms import ContactForm
 
 
@@ -20,9 +20,11 @@ def home(request):
 def about(request):
     testimonials = Testimonial.objects.filter(is_active=True)
     team = TeamMember.objects.filter(is_active=True)
+    studio_images = StudioImage.objects.filter(is_active=True)[:3]
     context = {
         'testimonials': testimonials,
         'team': team,
+        'studio_images': studio_images,
         'page': 'about',
     }
     return render(request, 'core/about.html', context)

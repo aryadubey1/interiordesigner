@@ -125,3 +125,22 @@ class TeamMember(models.Model):
         if self.photo:
             return self.photo.url
         return self.photo_url or ''
+    
+
+class StudioImage(models.Model):
+    image = models.FileField(upload_to='studio/', blank=True, null=True)
+    image_url = models.URLField(blank=True, help_text='Or paste an external/Cloudinary URL')
+    caption = models.CharField(max_length=100, blank=True)
+    order = models.PositiveIntegerField(default=0)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ['order']
+
+    def __str__(self):
+        return self.caption or f'Studio Image {self.order}'
+
+    def get_image_url(self):
+        if self.image:
+            return self.image.url
+        return self.image_url or ''

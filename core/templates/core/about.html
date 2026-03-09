@@ -51,14 +51,43 @@
     </div>
     <div class="reveal-right">
       <div class="grid grid-cols-2 gap-4">
-        <div class="img-placeholder" style="height:300px; grid-column: 1; grid-row: 1;">
-          <span class="font-display text-6xl" style="color:rgba(201,169,110,0.25);">L</span>
-        </div>
-        <div class="img-placeholder" style="height:200px; grid-column: 2; grid-row: 1; align-self: end; margin-bottom: 8px; background:linear-gradient(135deg,#EDE9E3,#D6D0C8);">
-        </div>
-        <div class="img-placeholder" style="height:200px; grid-column: 1 / span 2; grid-row: 2; background:linear-gradient(135deg,#EDE9E3,#D6D0C8);">
-          <span class="font-display text-sm tracking-widest" style="color:rgba(26,26,26,0.3);">STUDIO INTERIOR</span>
-        </div>
+        {% if studio_images %}
+          {% for img in studio_images %}
+            {% if forloop.counter == 1 %}
+            <div style="height:300px; grid-column:1; grid-row:1; overflow:hidden;">
+              {% if img.get_image_url %}
+              <img src="{{ img.get_image_url }}" alt="{{ img.caption }}" class="w-full h-full object-cover">
+              {% else %}
+              <div class="img-placeholder w-full h-full"><span class="font-display text-6xl" style="color:rgba(201,169,110,0.25);">L</span></div>
+              {% endif %}
+            </div>
+            {% elif forloop.counter == 2 %}
+            <div style="height:200px; grid-column:2; grid-row:1; overflow:hidden; align-self:end; margin-bottom:8px;">
+              {% if img.get_image_url %}
+              <img src="{{ img.get_image_url }}" alt="{{ img.caption }}" class="w-full h-full object-cover">
+              {% else %}
+              <div class="img-placeholder w-full h-full" style="background:linear-gradient(135deg,#EDE9E3,#D6D0C8);"></div>
+              {% endif %}
+            </div>
+            {% elif forloop.counter == 3 %}
+            <div style="height:200px; grid-column:1 / span 2; grid-row:2; overflow:hidden;">
+              {% if img.get_image_url %}
+              <img src="{{ img.get_image_url }}" alt="{{ img.caption }}" class="w-full h-full object-cover">
+              {% else %}
+              <div class="img-placeholder w-full h-full" style="background:linear-gradient(135deg,#EDE9E3,#D6D0C8);"></div>
+              {% endif %}
+            </div>
+            {% endif %}
+          {% endfor %}
+        {% else %}
+          <div class="img-placeholder" style="height:300px; grid-column:1; grid-row:1;">
+            <span class="font-display text-6xl" style="color:rgba(201,169,110,0.25);">L</span>
+          </div>
+          <div class="img-placeholder" style="height:200px; grid-column:2; grid-row:1; align-self:end; margin-bottom:8px; background:linear-gradient(135deg,#EDE9E3,#D6D0C8);"></div>
+          <div class="img-placeholder" style="height:200px; grid-column:1 / span 2; grid-row:2; background:linear-gradient(135deg,#EDE9E3,#D6D0C8);">
+            <span class="font-display text-sm tracking-widest" style="color:rgba(26,26,26,0.3);">STUDIO INTERIOR</span>
+          </div>
+        {% endif %}
       </div>
     </div>
   </div>

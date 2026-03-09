@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category, Project, ProjectImage, Service, Testimonial, ContactMessage, TeamMember
+from .models import Category, Project, ProjectImage, Service, Testimonial, ContactMessage, TeamMember, StudioImage
 
 
 class ProjectImageInline(admin.TabularInline):
@@ -44,4 +44,10 @@ class ContactMessageAdmin(admin.ModelAdmin):
 @admin.register(TeamMember)
 class TeamMemberAdmin(admin.ModelAdmin):
     list_display = ('name', 'role', 'order', 'is_active')
+    list_editable = ('order', 'is_active')
+
+
+@admin.register(StudioImage)
+class StudioImageAdmin(admin.ModelAdmin):
+    list_display = ('caption', 'order', 'is_active')
     list_editable = ('order', 'is_active')
