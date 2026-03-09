@@ -420,21 +420,32 @@
       document.body.style.cursor = 'auto';
 
       let cursorTimeout;
+      let ringX = 0, ringY = 0, dotX = 0, dotY = 0;
+      let animating = false;
+
+      function animateRingMobile() {
+        ringX += (dotX - ringX) * 0.12;
+        ringY += (dotY - ringY) * 0.12;
+        ring.style.left = ringX + 'px';
+        ring.style.top = ringY + 'px';
+        requestAnimationFrame(animateRingMobile);
+      }
+      animateRingMobile();
+
       document.addEventListener('touchstart', e => {
         const touch = e.touches[0];
+        dotX = touch.clientX;
+        dotY = touch.clientY;
 
-        // Show both dot and ring at tap position
         dot.style.display = 'block';
         dot.style.opacity = '1';
         dot.style.transition = 'none';
-        dot.style.left = touch.clientX + 'px';
-        dot.style.top = touch.clientY + 'px';
+        dot.style.left = dotX + 'px';
+        dot.style.top = dotY + 'px';
 
         ring.style.display = 'block';
         ring.style.opacity = '1';
         ring.style.transition = 'none';
-        ring.style.left = touch.clientX + 'px';
-        ring.style.top = touch.clientY + 'px';
 
         clearTimeout(cursorTimeout);
         cursorTimeout = setTimeout(() => {
@@ -513,20 +524,26 @@
       document.body.style.overflow = '';
     }
 
-    // Use both click and touchend to ensure it works on mobile
     function addTapListener(el, fn) {
-      el.addEventListener('click', fn);
       el.addEventListener('touchend', e => {
         e.preventDefault();
+        e.stopPropagation();
         fn();
       });
+      el.addEventListener('click', fn);
     }
 
     addTapListener(menuBtn, openMenu);
     addTapListener(closeMenuBtn, closeMenu);
 
+    // Fix: navigate AND close menu when link is tapped
     mobileMenu.querySelectorAll('a').forEach(link => {
-      addTapListener(link, closeMenu);
+      link.addEventListener('touchend', e => {
+        e.stopPropagation();
+        const href = link.getAttribute('href');
+        closeMenu();
+        setTimeout(() => { window.location.href = href; }, 50);
+      });
     });
 
     // ── Scroll reveal ──
