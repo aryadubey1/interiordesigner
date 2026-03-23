@@ -62,14 +62,15 @@ DATABASES = {
     'default': dj_database_url.config(
         default=f'sqlite:///{BASE_DIR}/db.sqlite3',
         conn_max_age=600,
+        ssl_require=True,
     )
 }
 
 # Force Project to use its own schema on Render
-if os.getenv('RENDER'): # A safer check than 'not DEBUG'
-    DATABASES['default']['OPTIONS'] = {
-        'options': '-c search_path=project_b_schema'
-    }
+# if os.getenv('RENDER'): # A safer check than 'not DEBUG'
+#     DATABASES['default']['OPTIONS'] = {
+#         'options': '-c search_path=project_b_schema'
+#     }
 
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -107,10 +108,10 @@ STORAGES = {
     },
 }
 
-if not DEBUG:
-    DATABASES['default']['OPTIONS'] = {
-        'options': '-c search_path=project_b_schema'
-    }
+# if not DEBUG:
+#     DATABASES['default']['OPTIONS'] = {
+#         'options': '-c search_path=project_b_schema'
+#     }
 
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
