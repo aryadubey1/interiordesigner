@@ -11,8 +11,7 @@ DEBUG = os.getenv('DEBUG') == 'True'
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 CSRF_TRUSTED_ORIGINS = [
-    f'https://{host}' for host in os.getenv('ALLOWED_HOSTS', 'localhost').split(',')
-    if 'onrender.com' in host
+    'https://lumiere.clarifyweb.com',
 ]
 
 INSTALLED_APPS = [
@@ -63,11 +62,10 @@ if DATABASE_URL:
     DATABASES = {
         'default': {
             **dj_database_url.parse(DATABASE_URL),
-            'CONN_MAX_AGE': 0,       
+            'CONN_MAX_AGE': 600,       
             'CONN_HEALTH_CHECKS': True,
             'OPTIONS': {
                 'connect_timeout': 10,
-                'sslmode': 'require',  
             }
         }
     }

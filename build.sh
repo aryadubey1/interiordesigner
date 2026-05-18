@@ -1,11 +1,19 @@
 #!/usr/bin/env bash
 set -o errexit
 
+# Activate virtualenv — adjust path if yours is different
+source /home/ubuntu/lumiere/venv/bin/activate
+
+echo "Installing dependencies..."
 pip install -r requirements.txt
 
+echo "Collecting static files..."
 python manage.py collectstatic --no-input
+
+echo "Running migrations..."
 python manage.py migrate
 
+echo "Setting up superuser..."
 python manage.py shell << END
 from django.contrib.auth import get_user_model
 import os
@@ -31,3 +39,5 @@ else:
     u.save()
     print(f"UPDATED SUPERUSER: {username}")
 END
+
+echo "Deploy complete."
