@@ -1,0 +1,16 @@
+[Unit]
+Description=lumiere (lumiere.clarifyweb.com) - Django on gunicorn
+After=network.target postgresql.service
+
+[Service]
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/var/www/lumiere
+EnvironmentFile=/var/www/lumiere-shared/.env
+Environment=DJANGO_SETTINGS_MODULE=config.settings
+ExecStart=/var/www/lumiere-shared/venv/bin/gunicorn --bind 127.0.0.1:8103 --workers 2 --timeout 120 config.wsgi:application
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
