@@ -1,6 +1,6 @@
 # Lumière — Interior Design Website
 
-A refined, full-stack interior design portfolio website built with Django, Django Templates, and Tailwind CSS (CDN). Designed to be deployed on Render with a hosted PostgreSQL database.
+A refined interior design studio website built with Django and Django Templates. Tailwind is compiled (`bin/build-css.sh` → `core/static/css/app.css`, commit the output); motion is GSAP + Lenis in `core/static/js/site.js`.
 
 ---
 

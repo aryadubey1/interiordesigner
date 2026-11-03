@@ -4,12 +4,22 @@ from .models import Project, Service, Testimonial, Category, TeamMember, StudioI
 from .forms import ContactForm
 
 
+def _showcase(limit=5):
+    """Featured projects first, then the rest, so the home grid is never half empty."""
+    featured = list(Project.objects.filter(is_featured=True))
+    others = list(Project.objects.filter(is_featured=False))
+    return (featured + others)[:limit]
+
+
 def home(request):
-    featured_projects = Project.objects.filter(is_featured=True)[:6]
+    featured_projects = _showcase()
     services = Service.objects.filter(is_active=True)[:4]
     testimonials = Testimonial.objects.filter(is_active=True)[:3]
+    studio_images = list(StudioImage.objects.filter(is_active=True)[:3])
     context = {
         'featured_projects': featured_projects,
+        'studio_images': studio_images,
+        'hero_image': studio_images[0] if studio_images else None,
         'services': services,
         'testimonials': testimonials,
         'page': 'home',
@@ -36,6 +46,7 @@ def services(request):
     
     context = {
         'services': all_services,
+        'head_project': Project.objects.filter(is_featured=True).first() or Project.objects.first(),
         'page': 'services',
     }
     return render(request, 'core/services.html', context)
@@ -86,6 +97,7 @@ def contact(request):
             return redirect('contact')
     context = {
         'form': form,
+        'head_image': StudioImage.objects.filter(is_active=True).first(),
         'page': 'contact',
     }
     return render(request, 'core/contact.html', context)

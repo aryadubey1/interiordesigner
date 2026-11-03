@@ -1,124 +1,45 @@
 {% extends 'core/base.html' %}
-
-{% block title %}Services — Lumière Interior Design{% endblock %}
-{% block meta_description %}From full residential design to FF&E consultation — discover the breadth of Lumière's interior design services.{% endblock %}
-
+{% load site_extras %}
+{% block title %}Services · Lumière Interior Design{% endblock %}
+{% block meta_description %}From whole-home design to styling and custom furniture: Lumière's interior design services.{% endblock %}
 {% block content %}
+{% include "core/_page_head.html" with line1="Crafted for" line2="every space." lead="Whole-home transformations, restaurants and workplaces, or a single considered room. Every engagement is shaped around your vision, timeline and scale." %}
 
-<!-- ── HERO ── -->
-<section class="page-hero" style="background:var(--charcoal);position:relative;overflow:hidden;">
-  <div style="position:absolute;inset:0;">
-    <div style="position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(201,169,110,0.3),transparent);top:30%;"></div>
-    <div class="font-display" style="position:absolute;right:-2%;top:50%;transform:translateY(-50%);font-size:18vw;font-weight:300;color:rgba(201,169,110,0.04);line-height:1;user-select:none;pointer-events:none;font-family:'Cormorant Garamond',serif;">Services</div>
-  </div>
-  <div class="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
-    <div class="flex items-center gap-4 mb-8" style="opacity:0;animation:fadeInUp 0.8s ease 0.3s forwards;">
-      <div class="gold-line"></div>
-      <span style="font-family:'DM Sans',sans-serif;font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);">What We Offer</span>
-    </div>
-    <h1 class="font-display font-light text-ivory" style="font-size:clamp(3rem,7vw,6rem);line-height:1.05;opacity:0;animation:fadeInUp 0.9s ease 0.5s forwards;">
-      Crafted for<br><em style="color:var(--gold);">Every Space</em>
-    </h1>
-  </div>
-</section>
+{% if head_project %}
+<div class="wrap"><div class="rv pic aspect-[21/9]"><img src="{{ head_project.get_image_url|cld:'f_auto,q_auto,c_fill,ar_21:9,w_2200' }}" width="2200" height="943" alt="{{ head_project.title }}" /></div></div>
+{% endif %}
 
-<!-- ── INTRO ── -->
-<section class="py-20 px-6 md:px-12 bg-ivory">
-  <div class="max-w-3xl mx-auto text-center reveal">
-    <p class="font-display font-light text-charcoal leading-relaxed" style="font-size:clamp(1.3rem,2.5vw,1.9rem);">
-      We offer a comprehensive range of interior design services — from whole-home transformations to refined detail consultation. Every engagement is tailored to your vision, timeline, and scale.
-    </p>
-  </div>
-</section>
-
-<!-- ── SERVICES LIST ── -->
-<section class="pb-28 px-6 md:px-12 bg-ivory">
-  <div class="max-w-7xl mx-auto">
-    {% if services %}
-        {% for service in services %}
-            <div class="reveal border-t py-16 grid md:grid-cols-12 gap-10 items-start group" style="border-color:rgba(201,169,110,0.2);">
-                <div class="md:col-span-1">
-                <div class="font-display text-5xl font-light leading-none" style="color:rgba(201,169,110,0.3);">
-                    {{ forloop.counter|stringformat:"02d" }}
-                </div>
-                </div>
-                <div class="md:col-span-1">
-                <div class="text-3xl mt-2" style="color:var(--gold);">{{ service.icon }}</div>
-                </div>
-                <div class="md:col-span-3">
-                <h2 class="font-display text-3xl font-light text-charcoal group-hover:text-gold transition-colors duration-500 leading-tight">{{ service.title }}</h2>
-                </div>
-                <div class="md:col-span-5">
-                <p class="font-body text-sm text-charcoal-light leading-relaxed">{{ service.description }}</p>
-                </div>
-                <div class="md:col-span-2 md:text-right">
-                <a href="{% url 'contact' %}" class="btn-outline text-xs mt-2 inline-flex">Enquire</a>
-                </div>
-            </div>
-        {% endfor %}
-        {% else %}
-        <div class="border-t py-16 text-center" style="border-color:rgba(201,169,110,0.2);">
-            <div class="font-display text-6xl mb-4" style="color:rgba(201,169,110,0.2);">✦</div>
-            <p class="font-display text-2xl font-light text-charcoal/40">Add services via the admin panel</p>
-            <p class="font-body text-sm text-charcoal/30 mt-2">Go to /admin → Services → Add Service</p>
+<section class="wrap pt-24">
+  <ul class="border-t border-ink/15" role="list">
+    {% for service in services %}
+    <li class="svc-row rv border-b border-ink/15">
+      <div class="grid gap-4 py-10 md:grid-cols-12 md:gap-10">
+        <h2 class="svc-title text-[clamp(2rem,3.2vw,2.8rem)] md:col-span-5">{{ service.title }}</h2>
+        <div class="md:col-span-6">
+          <p class="text-ink">{{ service.short_description }}</p>
+          <p class="mt-3 text-ink-2">{{ service.description }}</p>
         </div>
-    {% endif %}
-  </div>
+        <a href="{% url 'contact' %}" class="tlink self-start md:col-span-1 md:justify-self-end">Enquire</a>
+      </div>
+    </li>
+    {% empty %}
+    <li class="py-10 text-ink-2">Add services in the admin to list them here.</li>
+    {% endfor %}
+  </ul>
 </section>
 
-<!-- ── PROCESS ── -->
-<section class="py-28 px-6 md:px-12" style="background:var(--ivory-dark);">
-  <div class="max-w-7xl mx-auto">
-    <div class="mb-16 reveal">
-      <div class="flex items-center gap-4 mb-6">
-        <div class="gold-line"></div>
-        <span style="font-family:'DM Sans',sans-serif;font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);">How We Work</span>
-      </div>
-      <h2 class="font-display font-light text-charcoal" style="font-size:clamp(2rem,4.5vw,3.5rem);">Our Process</h2>
-    </div>
-    <div class="grid md:grid-cols-4 gap-0">
-      <div class="reveal delay-1 p-8 border-t-2 border-l" style="border-top-color:var(--gold);border-left-color:transparent;">
-        <div class="font-display text-4xl mb-4" style="color:var(--gold);">01</div>
-        <h3 class="font-display text-xl font-light text-charcoal mb-3">Discovery</h3>
-        <p class="font-body text-xs text-charcoal-light leading-relaxed">We begin by listening — understanding your lifestyle, aspirations, and how you relate to space. No brief is too broad or too specific.</p>
-      </div>
-      <div class="reveal delay-2 p-8 border-t-2 border-l" style="border-top-color:var(--gold);border-left-color:rgba(201,169,110,0.15);">
-        <div class="font-display text-4xl mb-4" style="color:var(--gold);">02</div>
-        <h3 class="font-display text-xl font-light text-charcoal mb-3">Concept</h3>
-        <p class="font-body text-xs text-charcoal-light leading-relaxed">We develop a considered design direction — mood boards, spatial layouts, material palettes — translating ideas into a cohesive vision.</p>
-      </div>
-      <div class="reveal delay-3 p-8 border-t-2 border-l" style="border-top-color:var(--gold);border-left-color:rgba(201,169,110,0.15);">
-        <div class="font-display text-4xl mb-4" style="color:var(--gold);">03</div>
-        <h3 class="font-display text-xl font-light text-charcoal mb-3">Design</h3>
-        <p class="font-body text-xs text-charcoal-light leading-relaxed">Detailed design documentation, specifications, and procurement plans — every element considered with precision and care.</p>
-      </div>
-      <div class="reveal delay-4 p-8 border-t-2 border-l" style="border-top-color:var(--gold);border-left-color:rgba(201,169,110,0.15);">
-        <div class="font-display text-4xl mb-4" style="color:var(--gold);">04</div>
-        <h3 class="font-display text-xl font-light text-charcoal mb-3">Installation</h3>
-        <p class="font-body text-xs text-charcoal-light leading-relaxed">We oversee every detail of implementation — coordinating contractors, deliveries, and styling until the space feels complete.</p>
-      </div>
-    </div>
+<section class="wrap pt-28">
+  <h2 class="rv h-sec mb-12">How we <em>work</em></h2>
+  <ol class="grid gap-10 md:grid-cols-4">
+    <li class="rv border-t border-ink/20 pt-6"><h3 class="text-3xl">Discovery</h3><p class="mt-3 text-ink-2">We listen: how you live, what you love, how you want a room to feel.</p></li>
+    <li class="rv border-t border-ink/20 pt-6"><h3 class="text-3xl">Concept</h3><p class="mt-3 text-ink-2">Mood boards, layouts and material palettes turn ideas into one clear direction.</p></li>
+    <li class="rv border-t border-ink/20 pt-6"><h3 class="text-3xl">Design</h3><p class="mt-3 text-ink-2">Detailed drawings, specifications and procurement, every element considered.</p></li>
+    <li class="rv border-t border-ink/20 pt-6"><h3 class="text-3xl">Installation</h3><p class="mt-3 text-ink-2">We run contractors, deliveries and styling until the space feels complete.</p></li>
+  </ol>
+  <div class="rv mt-20 flex flex-col items-start justify-between gap-6 bg-paper-2 p-8 sm:flex-row sm:items-center sm:p-12">
+    <p class="serif text-4xl">Every project starts with a <em>free consultation.</em></p>
+    <a href="{% url 'contact' %}" class="btn-ink shrink-0">Book a consultation <span class="arr" aria-hidden="true">→</span></a>
   </div>
 </section>
-
-<!-- ── CTA ── -->
-<section class="py-28 px-6 md:px-12 text-center" style="background:var(--charcoal);">
-  <div class="max-w-xl mx-auto reveal">
-    <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(201,169,110,0.06) 0%,transparent 70%);pointer-events:none;"></div>
-    <div class="gold-line mx-auto mb-8"></div>
-    <h2 class="font-display font-light text-ivory mb-6" style="font-size:clamp(2rem,4vw,3.5rem);line-height:1.1;">
-      Let's discuss your <em style="color:var(--gold);">project</em>.
-    </h2>
-    <p class="font-body text-sm text-ivory/50 leading-relaxed mb-10">Every engagement begins with a complimentary consultation. We'd love to hear what you're imagining.</p>
-    <a href="{% url 'contact' %}" class="btn-primary">Book a Consultation</a>
-  </div>
-</section>
-
-<style>
-  @keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(32px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-</style>
-
+<div class="h-28"></div>
 {% endblock %}

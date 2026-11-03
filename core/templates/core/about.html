@@ -1,226 +1,75 @@
 {% extends 'core/base.html' %}
-
-{% block title %}About — Lumière Interior Design{% endblock %}
-{% block meta_description %}The story behind Lumière — our philosophy, our team, and our approach to creating spaces that endure.{% endblock %}
-
+{% load site_extras %}
+{% block title %}Studio · Lumière Interior Design{% endblock %}
+{% block meta_description %}The story behind Lumière: our philosophy, our team and how we work.{% endblock %}
 {% block content %}
+{% include "core/_page_head.html" with line1="Design with" line2="purpose." lead="Founded in 2012, Lumière has spent more than a decade refining the art of interior composition: architecture, material and the lived experience of a room." %}
 
-<!-- ── HERO ── -->
-<section class="page-hero" style="background: var(--charcoal); overflow:hidden; position:relative;">
-  <div style="position:absolute;inset:0;">
-    <div style="position:absolute;top:0;right:0;width:50%;height:100%;background:linear-gradient(135deg,transparent 0%,rgba(201,169,110,0.05) 100%);"></div>
-    <div style="position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(201,169,110,0.3),transparent);"></div>
-    <div class="font-display" style="position:absolute;right:-2%;top:50%;transform:translateY(-50%);font-size:22vw;font-weight:300;color:rgba(201,169,110,0.04);line-height:1;user-select:none;pointer-events:none;font-family:'Cormorant Garamond',serif;">About</div>
+{% if studio_images %}
+<section class="wrap grid gap-4 md:grid-cols-12">
+  {% for img in studio_images %}
+  <div class="rv pic {% cycle 'aspect-[4/3] md:col-span-7' 'aspect-[4/5] md:col-span-5' 'aspect-[21/9] md:col-span-12' %}">
+    <img src="{{ img.get_image_url|cld:'f_auto,q_auto,c_fill,w_1600' }}" srcset="{{ img.get_image_url|cld:'f_auto,q_auto,c_fill,w_800' }} 800w, {{ img.get_image_url|cld:'f_auto,q_auto,c_fill,w_1600' }} 1600w, {{ img.get_image_url|cld:'f_auto,q_auto,c_fill,w_2400' }} 2400w" sizes="(min-width: 768px) 60vw, 92vw" width="1600" height="1200" loading="{% if forloop.first %}eager{% else %}lazy{% endif %}" alt="{{ img.caption }}" />
   </div>
-  <div class="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
-    <div class="flex items-center gap-4 mb-8" style="opacity:0;animation:fadeInUp 0.8s ease 0.3s forwards;">
-      <div class="gold-line"></div>
-      <span style="font-family:'DM Sans',sans-serif;font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);">Our Story</span>
-    </div>
-    <h1 class="font-display font-light text-ivory" style="font-size:clamp(3rem,7vw,6rem);line-height:1.05;opacity:0;animation:fadeInUp 0.9s ease 0.5s forwards;">
-      Design with<br><em style="color:var(--gold);">Purpose</em>
-    </h1>
-    <p class="font-body text-ivory/50 max-w-lg mt-6 leading-relaxed" style="opacity:0;animation:fadeInUp 0.9s ease 0.7s forwards;">
-      Founded in 2012, Lumière has spent over a decade refining the art of interior composition — blending architecture, materiality, and the lived experience of space.
-    </p>
+  {% endfor %}
+</section>
+{% endif %}
+
+<section class="wrap grid gap-12 pt-28 md:grid-cols-12">
+  <h2 class="rv h-sec md:col-span-5">Space is the most <em>intimate</em> art.</h2>
+  <div class="space-y-6 text-ink-2 md:col-span-6 md:col-start-7">
+    <p class="rv lead text-ink">Lumière began with a simple conviction: interiors change how we feel, how we connect and how we live. Every project is a collaboration, and we listen before we draw a single line.</p>
+    <p class="rv">Our process is careful and unhurried. We start with stories, not floor plans, and learn how you want to live in a space. Then we bring material, light and form together into something that feels entirely yours.</p>
+    <p class="rv">We work with fine craftspeople, architects and artisans who share our commitment to quality and longevity, from the joinery detail to the last coat of paint.</p>
   </div>
 </section>
 
-<!-- ── MANIFESTO ── -->
-<section class="py-28 px-6 md:px-12 bg-ivory">
-  <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-20 items-center">
-    <div class="reveal-left">
-      <div class="flex items-center gap-4 mb-6">
-        <div class="gold-line"></div>
-        <span style="font-family:'DM Sans',sans-serif;font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);">Who We Are</span>
-      </div>
-      <h2 class="font-display font-light text-charcoal mb-8" style="font-size:clamp(2rem,4vw,3rem);line-height:1.15;">
-        A studio built on the belief that space is the most intimate art.
-      </h2>
-      <div class="space-y-5 font-body text-sm text-charcoal-light leading-relaxed">
-        <p>
-          Lumière was born from a simple conviction: that interiors have the power to transform how we feel, how we connect, and how we live. We approach every project as a collaboration — listening deeply before we draw a single line.
-        </p>
-        <p>
-          Our process is meticulous and unhurried. We begin with stories, not floor plans — understanding who you are and how you want to inhabit your space. From there, we curate materials, light, and form into something that feels entirely yours.
-        </p>
-        <p>
-          We partner with the finest craftspeople, architects, and artisans — people who share our commitment to quality and longevity. Every element is considered, from the joinery detail to the final layer of paint.
-        </p>
-      </div>
-    </div>
-    <div class="reveal-right">
-      <div class="grid grid-cols-2 gap-4">
-        {% if studio_images %}
-          {% for img in studio_images %}
-            {% if forloop.counter == 1 %}
-            <div style="height:300px; grid-column:1; grid-row:1; overflow:hidden;">
-              {% if img.get_image_url %}
-              <img src="{{ img.get_image_url }}" alt="{{ img.caption }}" class="w-full h-full object-cover">
-              {% else %}
-              <div class="img-placeholder w-full h-full"><span class="font-display text-6xl" style="color:rgba(201,169,110,0.25);">L</span></div>
-              {% endif %}
-            </div>
-            {% elif forloop.counter == 2 %}
-            <div style="height:200px; grid-column:2; grid-row:1; overflow:hidden; align-self:end; margin-bottom:8px;">
-              {% if img.get_image_url %}
-              <img src="{{ img.get_image_url }}" alt="{{ img.caption }}" class="w-full h-full object-cover">
-              {% else %}
-              <div class="img-placeholder w-full h-full" style="background:linear-gradient(135deg,#EDE9E3,#D6D0C8);"></div>
-              {% endif %}
-            </div>
-            {% elif forloop.counter == 3 %}
-            <div style="height:200px; grid-column:1 / span 2; grid-row:2; overflow:hidden;">
-              {% if img.get_image_url %}
-              <img src="{{ img.get_image_url }}" alt="{{ img.caption }}" class="w-full h-full object-cover">
-              {% else %}
-              <div class="img-placeholder w-full h-full" style="background:linear-gradient(135deg,#EDE9E3,#D6D0C8);"></div>
-              {% endif %}
-            </div>
-            {% endif %}
-          {% endfor %}
-        {% else %}
-          <div class="img-placeholder" style="height:300px; grid-column:1; grid-row:1;">
-            <span class="font-display text-6xl" style="color:rgba(201,169,110,0.25);">L</span>
-          </div>
-          <div class="img-placeholder" style="height:200px; grid-column:2; grid-row:1; align-self:end; margin-bottom:8px; background:linear-gradient(135deg,#EDE9E3,#D6D0C8);"></div>
-          <div class="img-placeholder" style="height:200px; grid-column:1 / span 2; grid-row:2; background:linear-gradient(135deg,#EDE9E3,#D6D0C8);">
-            <span class="font-display text-sm tracking-widest" style="color:rgba(26,26,26,0.3);">STUDIO INTERIOR</span>
-          </div>
-        {% endif %}
-      </div>
-    </div>
+<section class="wrap pt-28">
+  <h2 class="rv h-sec mb-12">What <em>guides</em> us</h2>
+  <div class="grid gap-12 border-t border-ink/15 pt-10 md:grid-cols-3">
+    <div class="rv"><h3 class="text-3xl">Intention</h3><p class="mt-3 text-ink-2">Every decision is deliberate. We don't fill space; we shape it, and each element earns its place.</p></div>
+    <div class="rv"><h3 class="text-3xl">Materiality</h3><p class="mt-3 text-ink-2">Stone, brass, timber, linen: materials that age beautifully and grow richer with time.</p></div>
+    <div class="rv"><h3 class="text-3xl">Collaboration</h3><p class="mt-3 text-ink-2">A great interior is a dialogue. We listen as much as we create, and build trust at every stage.</p></div>
   </div>
 </section>
 
-<!-- ── VALUES ── -->
-<section class="py-28 px-6 md:px-12" style="background: var(--ivory-dark);">
-  <div class="max-w-7xl mx-auto">
-    <div class="text-center mb-16 reveal">
-      <div class="flex items-center justify-center gap-4 mb-5">
-        <div class="gold-line"></div>
-        <span style="font-family:'DM Sans',sans-serif;font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);">What Guides Us</span>
-        <div class="gold-line"></div>
+{% if team %}
+<section class="wrap pt-28">
+  <h2 class="rv h-sec mb-12">The <em>studio</em></h2>
+  <div class="grid gap-12 md:grid-cols-2">
+    {% for member in team %}
+    <article class="rv grid gap-6 sm:grid-cols-[160px_1fr]">
+      {% if member.get_photo_url %}
+      <div class="pic aspect-[4/5]"><img src="{{ member.get_photo_url|cld:'f_auto,q_auto,c_fill,g_face,ar_4:5,w_400' }}" width="400" height="500" loading="lazy" alt="{{ member.name }}" /></div>
+      {% else %}
+      <div class="grid aspect-[4/5] max-w-[160px] place-items-center bg-paper-2 font-display text-6xl italic text-gold-deep" aria-hidden="true">{{ member.name|slice:":1" }}</div>
+      {% endif %}
+      <div>
+        <h3 class="text-3xl">{{ member.name }}</h3>
+        <p class="mt-1 text-[15px] font-medium text-gold-text">{{ member.role }}</p>
+        <p class="mt-4 text-ink-2">{{ member.bio }}</p>
       </div>
-      <h2 class="font-display font-light text-charcoal" style="font-size:clamp(2rem,4.5vw,3.5rem);">Our Principles</h2>
-    </div>
-    <div class="grid md:grid-cols-3 gap-12">
-      {% for principle in principles %}
-      <div class="reveal delay-{{ forloop.counter }}">
-        <div class="font-display text-5xl mb-4" style="color:var(--gold);line-height:1;">{{ principle.num }}</div>
-        <div style="width:40px;height:1px;background:var(--gold);margin-bottom:20px;"></div>
-        <h3 class="font-display text-2xl font-light text-charcoal mb-4">{{ principle.title }}</h3>
-        <p class="font-body text-sm text-charcoal-light leading-relaxed">{{ principle.text }}</p>
-      </div>
-      {% empty %}
-      <div class="reveal delay-1">
-        <div class="font-display text-5xl mb-4" style="color:var(--gold);line-height:1;">01</div>
-        <div style="width:40px;height:1px;background:var(--gold);margin-bottom:20px;"></div>
-        <h3 class="font-display text-2xl font-light text-charcoal mb-4">Intentionality</h3>
-        <p class="font-body text-sm text-charcoal-light leading-relaxed">Every decision is deliberate. We don't fill space; we shape it with purpose — each element earning its place.</p>
-      </div>
-      <div class="reveal delay-2">
-        <div class="font-display text-5xl mb-4" style="color:var(--gold);line-height:1;">02</div>
-        <div style="width:40px;height:1px;background:var(--gold);margin-bottom:20px;"></div>
-        <h3 class="font-display text-2xl font-light text-charcoal mb-4">Materiality</h3>
-        <p class="font-body text-sm text-charcoal-light leading-relaxed">We are drawn to materials that age beautifully — stone, brass, timber, linen. Surfaces that accrue richness over time.</p>
-      </div>
-      <div class="reveal delay-3">
-        <div class="font-display text-5xl mb-4" style="color:var(--gold);line-height:1;">03</div>
-        <div style="width:40px;height:1px;background:var(--gold);margin-bottom:20px;"></div>
-        <h3 class="font-display text-2xl font-light text-charcoal mb-4">Collaboration</h3>
-        <p class="font-body text-sm text-charcoal-light leading-relaxed">A great interior is a dialogue. We work alongside our clients, listening as much as we create — building trust at every stage.</p>
-      </div>
-      {% endfor %}
-    </div>
-  </div>
-</section>
-
-<!-- ── TEAM ── -->
-<section class="py-28 px-6 md:px-12 bg-ivory">
-  <div class="max-w-7xl mx-auto">
-    <div class="mb-16 reveal">
-      <div class="flex items-center gap-4 mb-6">
-        <div class="gold-line"></div>
-        <span style="font-family:'DM Sans',sans-serif;font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);">The Studio</span>
-      </div>
-      <h2 class="font-display font-light text-charcoal" style="font-size:clamp(2rem,4.5vw,3.5rem);">Meet the Team</h2>
-    </div>
-    <div class="grid md:grid-cols-3 gap-10">
-      {% for member in team %}
-      <div class="reveal delay-{{ forloop.counter }}">
-        <div class="mb-6 overflow-hidden" style="height:380px;">
-          {% if member.get_photo_url %}
-          <img src="{{ member.get_photo_url }}" alt="{{ member.name }}"
-               class="w-full h-full object-cover">
-          {% else %}
-          <div class="img-placeholder w-full h-full" style="background:linear-gradient(135deg,#EDE9E3,#D6D0C8);">
-            <span class="font-display text-6xl" style="color:rgba(26,26,26,0.12);">{{ member.name|slice:":1" }}</span>
-          </div>
-          {% endif %}
-        </div>
-        <h3 class="font-display text-2xl font-light text-charcoal">{{ member.name }}</h3>
-        <p class="font-body text-xs tracking-widest uppercase mt-1" style="color:var(--gold);font-size:0.6rem;">{{ member.role }}</p>
-        <p class="font-body text-sm text-charcoal-light leading-relaxed mt-4">{{ member.bio }}</p>
-      </div>
-      {% empty %}
-      <div class="md:col-span-3 text-center py-12">
-        <div class="font-display text-5xl mb-4" style="color:rgba(201,169,110,0.2);">✦</div>
-        <p class="font-display text-xl text-charcoal/40">Add team members via the admin panel</p>
-      </div>
-      {% endfor %}
-    </div>
-  </div>
-</section>
-
-<!-- ── TESTIMONIALS ── -->
-{% if testimonials %}
-<section class="py-28 px-6 md:px-12" style="background:var(--charcoal);">
-  <div class="max-w-7xl mx-auto">
-    <div class="text-center mb-16 reveal">
-      <div class="flex items-center justify-center gap-4 mb-5">
-        <div class="gold-line"></div>
-        <span style="font-family:'DM Sans',sans-serif;font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);">Client Voices</span>
-        <div class="gold-line"></div>
-      </div>
-      <h2 class="font-display font-light text-ivory" style="font-size:clamp(2rem,4.5vw,3.5rem);">What They Say</h2>
-    </div>
-    <div class="grid md:grid-cols-2 gap-8">
-      {% for t in testimonials %}
-      <div class="reveal delay-{{ forloop.counter }} p-8 border" style="border-color:rgba(201,169,110,0.2);">
-        <div class="font-display text-6xl leading-none mb-4" style="color:rgba(201,169,110,0.25);">"</div>
-        <p class="font-body text-sm text-ivory/60 leading-relaxed mb-8">{{ t.body }}</p>
-        <div>
-          <div class="font-display text-lg font-light text-ivory">{{ t.client_name }}</div>
-          {% if t.client_title %}<div class="font-body text-xs" style="color:var(--gold);letter-spacing:0.15em;text-transform:uppercase;margin-top:2px;">{{ t.client_title }}</div>{% endif %}
-        </div>
-      </div>
-      {% endfor %}
-    </div>
+    </article>
+    {% endfor %}
   </div>
 </section>
 {% endif %}
 
-<!-- ── CTA ── -->
-<section class="py-28 px-6 md:px-12 text-center bg-ivory">
-  <div class="max-w-xl mx-auto reveal">
-    <div class="gold-line mx-auto mb-8"></div>
-    <h2 class="font-display font-light text-charcoal mb-6" style="font-size:clamp(2.2rem,4vw,3.5rem);line-height:1.1;">
-      Ready to begin your <em style="color:var(--gold);">story</em>?
-    </h2>
-    <p class="font-body text-sm text-charcoal-light leading-relaxed mb-10">Let's talk about your space and how we can transform it into something extraordinary.</p>
-    <div class="flex justify-center gap-4 flex-wrap">
-      <a href="{% url 'contact' %}" class="btn-primary">Start a Conversation</a>
-      <a href="{% url 'portfolio' %}" class="btn-outline">See Our Work</a>
+{% if testimonials %}
+<section class="on-night mt-28 bg-night pb-20 pt-28 text-paper">
+  <div class="wrap">
+    <h2 class="rv h-sec mb-14">Kind <em>words</em></h2>
+    <div class="gap-10 md:columns-2">
+      {% for t in testimonials %}
+      <figure class="rv mb-12 break-inside-avoid">
+        <blockquote class="serif text-[24px] leading-[1.35]">“{{ t.body|unquote }}”</blockquote>
+        <figcaption class="mt-5 text-[15px]"><span class="font-medium">{{ t.client_name }}</span>{% if t.client_title %}<span class="block text-paper/60">{{ t.client_title }}</span>{% endif %}</figcaption>
+      </figure>
+      {% endfor %}
     </div>
   </div>
 </section>
-
-<style>
-  @keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(32px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-</style>
-
+{% else %}
+<div class="h-28"></div>
+{% endif %}
 {% endblock %}

@@ -1,570 +1,106 @@
-<!DOCTYPE html>
+{% load static %}<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>{% block title %}Lumière — Interior Design{% endblock %}</title>
-  <meta name="description" content="{% block meta_description %}Lumière crafts refined interiors with intention — spaces that breathe, inspire, and endure.{% endblock %}">
-
-  <!-- Google Fonts -->
+  <title>{% block title %}Lumière · Interior Design{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}Lumière designs refined, lasting interiors: homes, hospitality and workplaces composed with light, material and intention.{% endblock %}">
+  <meta name="theme-color" content="#f5f2ed" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%231c1b19'/%3E%3Ctext x='16' y='23' font-family='Georgia' font-style='italic' font-size='20' fill='%23c9a96e' text-anchor='middle'%3EL%3C/text%3E%3C/svg%3E" />
+  <script>document.documentElement.classList.add('js')</script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            display: ['"Cormorant Garamond"', 'serif'],
-            body: ['"DM Sans"', 'sans-serif'],
-          },
-          colors: {
-            ivory: '#F8F5F0',
-            'ivory-dark': '#EDE9E3',
-            charcoal: '#1A1A1A',
-            'charcoal-mid': '#2D2D2D',
-            'charcoal-light': '#555555',
-            gold: '#C9A96E',
-            'gold-light': '#DEC99A',
-          },
-        }
-      }
-    }
-  </script>
-
-  <style>
-    :root {
-      --ivory: #F8F5F0;
-      --ivory-dark: #EDE9E3;
-      --charcoal: #1A1A1A;
-      --charcoal-mid: #2D2D2D;
-      --charcoal-light: #555555;
-      --gold: #C9A96E;
-      --gold-light: #DEC99A;
-    }
-
-    *, *::before, *::after { box-sizing: border-box; }
-
-    html { scroll-behavior: smooth; }
-
-    body {
-      font-family: 'DM Sans', sans-serif;
-      background-color: var(--ivory);
-      color: var(--charcoal);
-      overflow-x: hidden;
-    }
-
-    /* ── Custom cursor ── */
-    body { cursor: none; }
-    #cursor-dot {
-      width: 8px; height: 8px;
-      background: var(--gold);
-      border-radius: 50%;
-      position: fixed;
-      top: 0; left: 0;
-      pointer-events: none;
-      z-index: 9999;
-      transform: translate(-50%, -50%);
-      transition: transform 0.1s ease, width 0.3s ease, height 0.3s ease, background 0.3s ease;
-    }
-    #cursor-ring {
-      width: 36px; height: 36px;
-      border: 1px solid var(--gold);
-      border-radius: 50%;
-      position: fixed;
-      top: 0; left: 0;
-      pointer-events: none;
-      z-index: 9998;
-      transform: translate(-50%, -50%);
-      transition: transform 0.15s ease, width 0.3s ease, height 0.3s ease, opacity 0.3s ease;
-    }
-    body:hover #cursor-ring { opacity: 1; }
-    a:hover ~ #cursor-ring, button:hover ~ #cursor-ring { transform: scale(1.5); }
-
-    /* ── Nav ── */
-    nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
-      transition: background 0.4s ease, box-shadow 0.4s ease;
-    }
-    nav.scrolled {
-      background: rgba(248, 245, 240, 0.95);
-      backdrop-filter: blur(12px);
-      box-shadow: 0 1px 0 rgba(201, 169, 110, 0.2);
-    }
-    .nav-link {
-      font-family: 'DM Sans', sans-serif;
-      font-size: 0.75rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--charcoal);
-      position: relative;
-      padding-bottom: 2px;
-      transition: color 0.3s;
-    }
-    .nav-link::after {
-      content: '';
-      position: absolute;
-      bottom: 0; left: 0;
-      width: 0; height: 1px;
-      background: var(--gold);
-      transition: width 0.3s ease;
-    }
-    .nav-link:hover::after, .nav-link.active::after { width: 100%; }
-    .nav-link.active { color: var(--gold); }
-
-    /* Mobile menu */
-    #mobile-menu {
-      transition: transform 0.4s cubic-bezier(0.76, 0, 0.24, 1), opacity 0.4s ease;
-    }
-    #mobile-menu.hidden { transform: translateX(100%); opacity: 0; pointer-events: none; }
-    #mobile-menu.open { transform: translateX(0); opacity: 1; }
-
-    /* ── Reveal animations ── */
-    .reveal {
-      opacity: 0;
-      transform: translateY(32px);
-      transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-                  transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    }
-    .reveal.visible { opacity: 1; transform: translateY(0); }
-
-    .reveal-left {
-      opacity: 0;
-      transform: translateX(-48px);
-      transition: opacity 0.9s ease, transform 0.9s ease;
-    }
-    .reveal-left.visible { opacity: 1; transform: translateX(0); }
-
-    .reveal-right {
-      opacity: 0;
-      transform: translateX(48px);
-      transition: opacity 0.9s ease, transform 0.9s ease;
-    }
-    .reveal-right.visible { opacity: 1; transform: translateX(0); }
-
-    /* Stagger delays */
-    .delay-1 { transition-delay: 0.1s; }
-    .delay-2 { transition-delay: 0.2s; }
-    .delay-3 { transition-delay: 0.3s; }
-    .delay-4 { transition-delay: 0.4s; }
-    .delay-5 { transition-delay: 0.5s; }
-    .delay-6 { transition-delay: 0.6s; }
-
-    /* ── Gold line divider ── */
-    .gold-line {
-      width: 48px; height: 1px;
-      background: var(--gold);
-      display: inline-block;
-    }
-
-    /* ── Button styles ── */
-    .btn-primary {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding: 14px 32px;
-      background: var(--charcoal);
-      color: var(--ivory);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 0.7rem;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      border: 1px solid var(--charcoal);
-      transition: background 0.35s ease, color 0.35s ease, border-color 0.35s ease;
-      cursor: none;
-    }
-    .btn-primary:hover {
-      background: var(--gold);
-      border-color: var(--gold);
-      color: var(--ivory);
-    }
-    .btn-outline {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding: 14px 32px;
-      background: transparent;
-      color: var(--charcoal);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 0.7rem;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      border: 1px solid var(--charcoal);
-      transition: background 0.35s ease, color 0.35s ease;
-      cursor: none;
-    }
-    .btn-outline:hover {
-      background: var(--charcoal);
-      color: var(--ivory);
-    }
-
-    /* ── Project card ── */
-    .project-card { overflow: hidden; position: relative; }
-    .project-card img {
-      width: 100%; height: 100%;
-      object-fit: cover;
-      transition: transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    }
-    .project-card:hover img { transform: scale(1.06); }
-    .project-card .overlay {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(to top, rgba(26,26,26,0.85) 0%, transparent 60%);
-      opacity: 0;
-      transition: opacity 0.4s ease;
-    }
-    .project-card:hover .overlay { opacity: 1; }
-    .project-card .card-info {
-      position: absolute;
-      bottom: 0; left: 0; right: 0;
-      padding: 28px;
-      transform: translateY(12px);
-      opacity: 0;
-      transition: transform 0.4s ease, opacity 0.4s ease;
-    }
-    .project-card:hover .card-info { transform: translateY(0); opacity: 1; }
-
-    /* ── Form inputs ── */
-    .form-input {
-      width: 100%;
-      background: transparent;
-      border: none;
-      border-bottom: 1px solid rgba(26,26,26,0.25);
-      padding: 14px 0;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 0.9rem;
-      color: var(--charcoal);
-      outline: none;
-      transition: border-color 0.3s ease;
-    }
-    .form-input::placeholder { color: var(--charcoal-light); }
-    .form-input:focus { border-color: var(--gold); }
-    textarea.form-input { resize: none; }
-
-    /* ── Page hero ── */
-    .page-hero {
-      padding-top: 140px;
-      padding-bottom: 80px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    /* ── Footer ── */
-    footer a { transition: color 0.3s; }
-    footer a:hover { color: var(--gold); }
-
-    /* ── Grain overlay ── */
-    body::after {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-      pointer-events: none;
-      z-index: 1000;
-      opacity: 0.4;
-    }
-
-    /* ── Testimonial card ── */
-    .testimonial-card {
-      border: 1px solid rgba(201, 169, 110, 0.3);
-      transition: border-color 0.3s ease, transform 0.4s ease;
-    }
-    .testimonial-card:hover {
-      border-color: var(--gold);
-      transform: translateY(-4px);
-    }
-
-    /* ── Image placeholder ── */
-    .img-placeholder {
-      background: linear-gradient(135deg, #EDE9E3 0%, #D6D0C8 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--charcoal-light);
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.1rem;
-      letter-spacing: 0.05em;
-    }
-  </style>
+  <link rel="preconnect" href="https://res.cloudinary.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400;1,500&family=DM+Sans:opsz,wght@9..40,400;9..40,500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
+  {% block extra_head %}{% endblock %}
 </head>
+<body class="{% block body_class %}{% endblock %} flex min-h-screen flex-col">
+  <a href="#main" class="btn-ink sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100]">Skip to content</a>
 
-<body class="bg-ivory text-charcoal">
-
-  <!-- Custom Cursor -->
-  <div id="cursor-dot"></div>
-  <div id="cursor-ring"></div>
-
-  <!-- ── NAVIGATION ── -->
-  <nav id="navbar" class="px-6 md:px-12 py-6">
-    <div class="max-w-7xl mx-auto flex items-center justify-between">
-      <!-- Logo -->
-      <a href="{% url 'home' %}" class="group" style="cursor: none;">
-        <span class="font-display text-xl font-light tracking-widest text-charcoal">LUMIÈRE</span>
-        <span class="block text-xs tracking-[0.25em] text-gold font-body uppercase" style="font-size: 0.55rem; margin-top: 1px;">Interior Design</span>
+  <header id="site-header" class="site-header fixed inset-x-0 top-0 z-50 text-ink">
+    <div class="wrap flex h-[76px] items-center justify-between gap-6">
+      <a href="{% url 'home' %}" class="leading-none" aria-label="Lumière home">
+        <span class="font-display text-[26px] font-normal tracking-[0.14em]" translate="no">LUMIÈRE</span>
+        <span class="mt-1 block text-[11px] uppercase tracking-[0.3em] opacity-70">Interior design</span>
       </a>
-
-      <!-- Desktop Nav -->
-      <div class="hidden md:flex items-center gap-10">
-        <a href="{% url 'home' %}" class="nav-link {% if page == 'home' %}active{% endif %}">Home</a>
-        <a href="{% url 'about' %}" class="nav-link {% if page == 'about' %}active{% endif %}">About</a>
-        <a href="{% url 'services' %}" class="nav-link {% if page == 'services' %}active{% endif %}">Services</a>
-        <a href="{% url 'portfolio' %}" class="nav-link {% if page == 'portfolio' %}active{% endif %}">Portfolio</a>
-        <a href="{% url 'contact' %}" class="btn-primary text-xs">Get in Touch</a>
-      </div>
-
-      <!-- Mobile hamburger -->
-      <button id="menu-btn" class="md:hidden flex flex-col gap-1.5 p-2" style="cursor: none;">
-        <span class="block w-6 h-px bg-charcoal transition-all duration-300" id="line1"></span>
-        <span class="block w-4 h-px bg-charcoal transition-all duration-300" id="line2"></span>
-        <span class="block w-6 h-px bg-charcoal transition-all duration-300" id="line3"></span>
+      <nav class="hidden items-center gap-9 md:flex" aria-label="Main">
+        <a href="{% url 'home' %}" class="nav-a" {% if page == 'home' %}aria-current="page"{% endif %}>Home</a>
+        <a href="{% url 'about' %}" class="nav-a" {% if page == 'about' %}aria-current="page"{% endif %}>Studio</a>
+        <a href="{% url 'services' %}" class="nav-a" {% if page == 'services' %}aria-current="page"{% endif %}>Services</a>
+        <a href="{% url 'portfolio' %}" class="nav-a" {% if page == 'portfolio' %}aria-current="page"{% endif %}>Portfolio</a>
+        <a href="{% url 'contact' %}" class="header-cta px-5 py-3 text-[13px] uppercase tracking-[0.16em] transition-colors">Start a project</a>
+      </nav>
+      <button id="menu-btn" type="button" class="-mr-2 grid h-11 w-11 place-items-center md:hidden" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M3 8h18M3 16h18"/></svg>
       </button>
     </div>
-  </nav>
+  </header>
 
-  <!-- Mobile Menu -->
-  <div id="mobile-menu" style="display:none; position:fixed; inset:0; background:var(--ivory); z-index:50; flex-direction:column; justify-content:center; align-items:center; gap:2.5rem;">
-    <button id="close-menu" class="absolute top-6 right-6 text-charcoal" style="cursor: none;">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
-    </button>
-    <a href="{% url 'home' %}" class="font-display text-4xl font-light text-charcoal hover:text-gold transition-colors" style="cursor:none;">Home</a>
-    <a href="{% url 'about' %}" class="font-display text-4xl font-light text-charcoal hover:text-gold transition-colors" style="cursor:none;">About</a>
-    <a href="{% url 'services' %}" class="font-display text-4xl font-light text-charcoal hover:text-gold transition-colors" style="cursor:none;">Services</a>
-    <a href="{% url 'portfolio' %}" class="font-display text-4xl font-light text-charcoal hover:text-gold transition-colors" style="cursor:none;">Portfolio</a>
-    <a href="{% url 'contact' %}" class="font-display text-4xl font-light text-charcoal hover:text-gold transition-colors" style="cursor:none;">Contact</a>
+  <div id="mobile-menu" class="fixed inset-0 z-[60] flex flex-col bg-paper md:hidden" role="dialog" aria-modal="true" aria-label="Menu">
+    <div class="wrap flex h-[76px] items-center justify-between">
+      <span class="font-display text-[26px] tracking-[0.14em]">LUMIÈRE</span>
+      <button id="close-menu" type="button" class="-mr-2 grid h-11 w-11 place-items-center" aria-label="Close menu">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <nav class="wrap flex flex-1 flex-col justify-center gap-2 pb-20" aria-label="Mobile">
+      <a href="{% url 'home' %}" class="font-display text-5xl font-light">Home</a>
+      <a href="{% url 'about' %}" class="font-display text-5xl font-light">Studio</a>
+      <a href="{% url 'services' %}" class="font-display text-5xl font-light">Services</a>
+      <a href="{% url 'portfolio' %}" class="font-display text-5xl font-light">Portfolio</a>
+      <a href="{% url 'contact' %}" class="font-display text-5xl font-light italic text-gold-deep">Start a project</a>
+    </nav>
   </div>
 
-  <!-- ── MESSAGES ── -->
   {% if messages %}
-  <div class="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 flex flex-col gap-3">
+  <div class="fixed bottom-6 left-1/2 z-50 w-[min(92vw,520px)] -translate-x-1/2" aria-live="polite">
     {% for message in messages %}
-    <div class="message-toast px-8 py-4 text-sm tracking-wide border"
-         style="background: var(--charcoal); color: var(--ivory); border-color: var(--gold); font-family: 'DM Sans', sans-serif; animation: slideUp 0.4s ease;">
-      {{ message }}
-    </div>
+    <p class="message-toast bg-night px-6 py-4 text-[15px] text-paper">{{ message }}</p>
     {% endfor %}
   </div>
-  <style>
-    @keyframes slideUp {
-      from { opacity: 0; transform: translate(-50%, 20px); }
-      to { opacity: 1; transform: translate(-50%, 0); }
-    }
-  </style>
   {% endif %}
 
-  <!-- ── MAIN CONTENT ── -->
-  <main>
+  <main id="main" class="flex-1">
     {% block content %}{% endblock %}
   </main>
 
-  <!-- ── FOOTER ── -->
-  <footer class="bg-charcoal text-ivory py-16 px-6 md:px-12">
-    <div class="max-w-7xl mx-auto">
-      <div class="grid md:grid-cols-4 gap-12 mb-12">
-        <!-- Brand -->
-        <div class="md:col-span-2">
-          <span class="font-display text-2xl font-light tracking-widest">LUMIÈRE</span>
-          <p class="text-xs tracking-[0.25em] text-gold uppercase mt-1" style="font-size: 0.55rem;">Interior Design</p>
-          <p class="font-body text-sm text-ivory/60 mt-5 leading-relaxed max-w-xs">
-            We design spaces that transcend the ordinary — interiors where architecture, light, and materiality converge into lived poetry.
-          </p>
-        </div>
-        <!-- Navigation -->
-        <div>
-          <h4 class="text-xs tracking-[0.2em] uppercase text-gold/80 mb-5" style="font-size: 0.6rem;">Navigation</h4>
-          <ul class="space-y-3">
-            <li><a href="{% url 'home' %}" class="font-body text-sm text-ivory/60 hover:text-gold" style="cursor:none;">Home</a></li>
-            <li><a href="{% url 'about' %}" class="font-body text-sm text-ivory/60 hover:text-gold" style="cursor:none;">About</a></li>
-            <li><a href="{% url 'services' %}" class="font-body text-sm text-ivory/60 hover:text-gold" style="cursor:none;">Services</a></li>
-            <li><a href="{% url 'portfolio' %}" class="font-body text-sm text-ivory/60 hover:text-gold" style="cursor:none;">Portfolio</a></li>
-            <li><a href="{% url 'contact' %}" class="font-body text-sm text-ivory/60 hover:text-gold" style="cursor:none;">Contact</a></li>
-          </ul>
-        </div>
-        <!-- Contact -->
-        <div>
-          <h4 class="text-xs tracking-[0.2em] uppercase text-gold/80 mb-5" style="font-size: 0.6rem;">Studio</h4>
-          <address class="not-italic">
-            <p class="font-body text-sm text-ivory/60 leading-relaxed">
-              12 Rue de la Paix<br>
-              New York, NY 10001<br>
-              <a href="tel:+12125550199" class="hover:text-gold" style="cursor:none;">+1 (212) 555-0199</a><br>
-              <a href="mailto:hello@lumiere.studio" class="hover:text-gold" style="cursor:none;">hello@lumiere.studio</a>
-            </p>
-          </address>
-        </div>
+  <footer class="on-night bg-night text-paper">
+    <div class="wrap grid gap-12 py-20 md:grid-cols-12">
+      <div class="md:col-span-6">
+        <p class="font-display text-[clamp(2.4rem,4.6vw,4rem)] font-light leading-[1.02]">Let's make a room<br>you'll <em class="text-gold">live in</em> for years.</p>
+        <a href="{% url 'contact' %}" class="btn-paper mt-8">Start a project <span class="arr" aria-hidden="true">→</span></a>
       </div>
-      <div class="border-t border-ivory/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-        <p class="font-body text-xs text-ivory/30 tracking-widest">© 2025 LUMIÈRE INTERIOR DESIGN. ALL RIGHTS RESERVED.</p>
-        <div class="flex gap-6">
-          <a href="#" class="font-body text-xs text-ivory/30 hover:text-gold tracking-widest" style="cursor:none;">INSTAGRAM</a>
-          <a href="#" class="font-body text-xs text-ivory/30 hover:text-gold tracking-widest" style="cursor:none;">PINTEREST</a>
-          <a href="#" class="font-body text-xs text-ivory/30 hover:text-gold tracking-widest" style="cursor:none;">HOUZZ</a>
-        </div>
+      <div class="md:col-span-3">
+        <p class="kicker">Explore</p>
+        <ul class="mt-5 space-y-2.5 text-[16px] text-paper/80">
+          <li><a class="hover:text-gold" href="{% url 'about' %}">Studio</a></li>
+          <li><a class="hover:text-gold" href="{% url 'services' %}">Services</a></li>
+          <li><a class="hover:text-gold" href="{% url 'portfolio' %}">Portfolio</a></li>
+          <li><a class="hover:text-gold" href="{% url 'contact' %}">Contact</a></li>
+        </ul>
       </div>
+      <div class="md:col-span-3">
+        <p class="kicker">Studio</p>
+        <address class="mt-5 text-[16px] not-italic leading-relaxed text-paper/80">
+          12 Rue de la Paix<br>New York, NY 10001<br>
+          <a class="hover:text-gold" href="tel:+12125550199">+1 (212) 555-0199</a><br>
+          <a class="hover:text-gold" href="mailto:hello@lumiere.studio">hello@lumiere.studio</a>
+        </address>
+      </div>
+    </div>
+    <div class="wrap flex flex-col gap-2 border-t border-paper/10 py-6 text-[13px] text-paper/50 sm:flex-row sm:justify-between">
+      <p>© {% now "Y" %} Lumière Interior Design</p>
+      <p>Homes · Hospitality · Workplaces</p>
     </div>
   </footer>
 
-  <script>
-    const dot = document.getElementById('cursor-dot');
-    const ring = document.getElementById('cursor-ring');
+  <div id="cursor" aria-hidden="true"></div>
 
-    const isTouchDevice = () => window.matchMedia('(pointer: coarse)').matches;
-
-    if (isTouchDevice()) {
-      dot.style.display = 'none';
-      ring.style.display = 'none';
-      document.body.style.cursor = 'auto';
-
-      let cursorTimeout;
-      let ringX = 0, ringY = 0, dotX = 0, dotY = 0;
-      let animating = false;
-
-      function animateRingMobile() {
-        ringX += (dotX - ringX) * 0.12;
-        ringY += (dotY - ringY) * 0.12;
-        ring.style.left = ringX + 'px';
-        ring.style.top = ringY + 'px';
-        requestAnimationFrame(animateRingMobile);
-      }
-      animateRingMobile();
-
-      document.addEventListener('touchstart', e => {
-        const touch = e.touches[0];
-        dotX = touch.clientX;
-        dotY = touch.clientY;
-
-        dot.style.display = 'block';
-        dot.style.opacity = '1';
-        dot.style.transition = 'none';
-        dot.style.left = dotX + 'px';
-        dot.style.top = dotY + 'px';
-
-        ring.style.display = 'block';
-        ring.style.opacity = '1';
-        ring.style.transition = 'none';
-
-        clearTimeout(cursorTimeout);
-        cursorTimeout = setTimeout(() => {
-          dot.style.transition = 'opacity 0.5s ease';
-          ring.style.transition = 'opacity 0.5s ease';
-          dot.style.opacity = '0';
-          ring.style.opacity = '0';
-          setTimeout(() => {
-            dot.style.display = 'none';
-            ring.style.display = 'none';
-          }, 500);
-        }, 2000);
-      });
-
-    } else {
-      // ── Desktop: full custom cursor ──
-      let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
-
-      document.addEventListener('mousemove', e => {
-        mouseX = e.clientX; mouseY = e.clientY;
-        dot.style.left = mouseX + 'px';
-        dot.style.top = mouseY + 'px';
-      });
-
-      function animateRing() {
-        ringX += (mouseX - ringX) * 0.12;
-        ringY += (mouseY - ringY) * 0.12;
-        ring.style.left = ringX + 'px';
-        ring.style.top = ringY + 'px';
-        requestAnimationFrame(animateRing);
-      }
-      animateRing();
-
-      document.querySelectorAll('a, button').forEach(el => {
-        el.addEventListener('mouseenter', () => {
-          dot.style.width = '14px'; dot.style.height = '14px';
-          ring.style.width = '52px'; ring.style.height = '52px';
-        });
-        el.addEventListener('mouseleave', () => {
-          dot.style.width = '8px'; dot.style.height = '8px';
-          ring.style.width = '36px'; ring.style.height = '36px';
-        });
-      });
-    }
-
-    // ── Navbar scroll ──
-    const navbar = document.getElementById('navbar');
-    window.addEventListener('scroll', () => {
-      navbar.classList.toggle('scrolled', window.scrollY > 40);
-    });
-
-    // ── Mobile menu ──
-    const menuBtn = document.getElementById('menu-btn');
-    const closeMenuBtn = document.getElementById('close-menu');
-    const mobileMenu = document.getElementById('mobile-menu');
-
-    function openMenu() {
-      mobileMenu.style.cssText = `
-        display: flex !important;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        gap: 2.5rem;
-        position: fixed;
-        inset: 0;
-        z-index: 9997;
-        background: var(--ivory);
-        opacity: 1;
-        transform: translateX(0);
-      `;
-      document.body.style.overflow = 'hidden';
-    }
-
-    function closeMenu() {
-      mobileMenu.style.cssText = 'display: none !important;';
-      document.body.style.overflow = '';
-    }
-
-    function addTapListener(el, fn) {
-      el.addEventListener('touchend', e => {
-        e.preventDefault();
-        e.stopPropagation();
-        fn();
-      });
-      el.addEventListener('click', fn);
-    }
-
-    addTapListener(menuBtn, openMenu);
-    addTapListener(closeMenuBtn, closeMenu);
-
-    // Fix: navigate AND close menu when link is tapped
-    mobileMenu.querySelectorAll('a').forEach(link => {
-      link.addEventListener('touchend', e => {
-        e.stopPropagation();
-        const href = link.getAttribute('href');
-        closeMenu();
-        setTimeout(() => { window.location.href = href; }, 50);
-      });
-    });
-
-    // ── Scroll reveal ──
-    const reveals = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) entry.target.classList.add('visible');
-      });
-    }, { threshold: 0.12 });
-    reveals.forEach(el => observer.observe(el));
-
-    // ── Auto-hide messages ──
-    setTimeout(() => {
-      document.querySelectorAll('.message-toast').forEach(el => {
-        el.style.transition = 'opacity 0.5s ease';
-        el.style.opacity = '0';
-        setTimeout(() => el.remove(), 500);
-      });
-    }, 4000);
-  </script>
-
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js" defer></script>
+  <script src="{% static 'js/site.js' %}" defer></script>
   {% block extra_js %}{% endblock %}
 </body>
 </html>
