@@ -1,5 +1,5 @@
 [Unit]
-Description=lumiere (lumiere.clarifyweb.com) - Django on gunicorn
+Description=lumiere (lumiere.aryadubey.tech) - Django on gunicorn
 After=network.target postgresql.service
 
 [Service]
