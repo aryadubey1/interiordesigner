@@ -1,5 +1,7 @@
 /** Lumière: Tailwind is compiled into core/static/css/app.css (run bin/build-css.sh after template changes). */
 module.exports = {
+  // hover: variants only where a real hover exists (no sticky hover after a tap on phones)
+  future: { hoverOnlyWhenSupported: true },
   content: ["./core/templates/**/*.html", "./core/**/*.py", "./core/static/js/**/*.js"],
   theme: {
     extend: {
