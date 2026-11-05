@@ -39,11 +39,24 @@
     if (reduce) return reveal();
 
     if (window.Lenis) {
-      const lenis = new window.Lenis({ duration: 1.15, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
+      const lenis = new window.Lenis({ lerp: 0.085, wheelMultiplier: 0.9 }); // house feel (vale); touch stays native
       lenis.on("scroll", ScrollTrigger.update);
       gsap.ticker.add((t) => lenis.raf(t * 1000));
       gsap.ticker.lagSmoothing(0);
     }
+
+    /* Scroll picks where a fill should be; it gets there at its own speed (never faster than `rate` per second,
+       a far jump squeezed into 1.8 s), so a fast wheel or thumb flick can't rush it (playbooks/scroll-feel.md). */
+    const pacedFill = (st, render, rate) => {
+      let target = 0, v = 0, shown = -1;
+      ScrollTrigger.create(Object.assign({}, st, { onUpdate: (s) => { target = s.progress; } }));
+      gsap.ticker.add(() => {
+        const dt = Math.min(0.05, gsap.ticker.deltaRatio(60) / 60), d = target - v, ad = Math.abs(d);
+        if (ad < 1e-4) v = target;
+        else v += Math.sign(d) * Math.min(ad * (1 - Math.exp(-8 * dt)), Math.max(rate * (d < 0 ? 2 : 1), ad / 1.8) * dt);
+        if (Math.abs(v - shown) > 1e-4) { shown = v; render(v); }
+      });
+    };
 
     /* Desktop cursor ring, eased on the same ticker */
     const ring = $("#cursor");
@@ -69,13 +82,13 @@
       gsap.to("[data-hero-media] img", { yPercent: 10, ease: "none", scrollTrigger: { trigger: "[data-hero]", start: "top top", end: "bottom top", scrub: true } });
     }
 
-    /* Signature: a framed picture opens to the full width as it rises */
+    /* Signature: a framed picture opens to the full width once it is well in view. It plays at its own pace
+       (1.4 s), never scrubbed, so a fast flick still shows the whole opening. */
     $$("[data-open]").forEach((el) => {
       const side = innerWidth < 768 ? 5 : 14;
-      gsap.fromTo(el, { "--cx": side + "%", "--ci": "6%" }, {
-        "--cx": "0%", "--ci": "0%", ease: "none",
-        scrollTrigger: { trigger: el, start: "top 95%", end: "top 15%", scrub: true },
-      });
+      gsap.set(el, { "--cx": side + "%", "--ci": "6%" });
+      ScrollTrigger.create({ trigger: el, start: "top 70%", once: true,
+        onEnter: () => gsap.to(el, { "--cx": "0%", "--ci": "0%", duration: 1.4, ease: "power3.inOut" }) });
       const img = $("img", el);
       if (img) gsap.fromTo(img, { scale: 1.12 }, { scale: 1, ease: "none", scrollTrigger: { trigger: el, start: "top bottom", end: "bottom top", scrub: true } });
     });
@@ -99,10 +112,8 @@
       el.innerHTML = words.map((w) => `<span class="w" aria-hidden="true">${w === "intention." ? "<em>intention</em>." : w}</span>`).join(" ");
       const spans = $$(".w", el);
       spans.forEach((s) => s.style.setProperty("--o", "0.2"));
-      ScrollTrigger.create({
-        trigger: el, start: "top 80%", end: "bottom 50%", scrub: true,
-        onUpdate: (st) => { const p = st.progress * spans.length; spans.forEach((s, k) => s.style.setProperty("--o", String(0.2 + 0.8 * Math.min(1, Math.max(0, p - k))))); },
-      });
+      pacedFill({ trigger: el, start: "top 80%", end: "bottom 50%" },
+        (v) => { const p = v * spans.length; spans.forEach((s, k) => s.style.setProperty("--o", String(0.2 + 0.8 * Math.min(1, Math.max(0, p - k))))); }, 0.7);
     });
 
     /* Counters */
